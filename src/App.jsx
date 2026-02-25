@@ -3,11 +3,16 @@ import './App.css'
 import { allSongs } from './data/songs'
 
 function App() {
-  const [minLevel, setMinLevel] = useState(9.0)
-  const [maxLevel, setMaxLevel] = useState(10.9)
-  const [count, setCount] = useState(10)
+  const [minLevelInput, setMinLevelInput] = useState('9.0')
+  const [maxLevelInput, setMaxLevelInput] = useState('10.9')
+  const [countInput, setCountInput] = useState('10')
   const [selectedSongs, setSelectedSongs] = useState([])
   const [error, setError] = useState('')
+
+  // Parse input values
+  const minLevel = parseFloat(minLevelInput) || 9.0
+  const maxLevel = parseFloat(maxLevelInput) || 10.9
+  const count = parseInt(countInput) || 10
 
   // Filter songs based on level range
   const availableSongs = useMemo(() => {
@@ -66,8 +71,8 @@ function App() {
             <input
               type="number"
               id="minLevel"
-              value={minLevel}
-              onChange={(e) => setMinLevel(parseFloat(e.target.value) || 9.0)}
+              value={minLevelInput}
+              onChange={(e) => setMinLevelInput(e.target.value)}
               min="9.0"
               max="10.9"
               step="0.1"
@@ -78,8 +83,8 @@ function App() {
             <input
               type="number"
               id="maxLevel"
-              value={maxLevel}
-              onChange={(e) => setMaxLevel(parseFloat(e.target.value) || 10.9)}
+              value={maxLevelInput}
+              onChange={(e) => setMaxLevelInput(e.target.value)}
               min="9.0"
               max="10.9"
               step="0.1"
@@ -90,8 +95,8 @@ function App() {
             <input
               type="number"
               id="count"
-              value={count}
-              onChange={(e) => setCount(parseInt(e.target.value) || 1)}
+              value={countInput}
+              onChange={(e) => setCountInput(e.target.value)}
               min="1"
               max="100"
             />
