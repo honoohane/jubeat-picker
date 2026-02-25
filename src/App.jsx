@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react'
 import './App.css'
-import { jubeatLv10Songs } from './data/songs'
+import { allSongs } from './data/songs'
 
 function App() {
-  const [minLevel, setMinLevel] = useState(10.0)
+  const [minLevel, setMinLevel] = useState(9.0)
   const [maxLevel, setMaxLevel] = useState(10.9)
   const [count, setCount] = useState(10)
   const [selectedSongs, setSelectedSongs] = useState([])
@@ -11,7 +11,7 @@ function App() {
 
   // Filter songs based on level range
   const availableSongs = useMemo(() => {
-    return jubeatLv10Songs.filter(
+    return allSongs.filter(
       song => song.level >= minLevel && song.level <= maxLevel
     )
   }, [minLevel, maxLevel])
@@ -57,7 +57,7 @@ function App() {
   return (
     <div className="app-container">
       <h1>🎮 Jubeat Song Picker</h1>
-      <p className="subtitle">Lv10 随机选曲工具</p>
+      <p className="subtitle">Lv9-10 随机选曲工具</p>
 
       <div className="control-panel">
         <div className="input-group">
@@ -67,8 +67,8 @@ function App() {
               type="number"
               id="minLevel"
               value={minLevel}
-              onChange={(e) => setMinLevel(parseFloat(e.target.value) || 10.0)}
-              min="10.0"
+              onChange={(e) => setMinLevel(parseFloat(e.target.value) || 9.0)}
+              min="9.0"
               max="10.9"
               step="0.1"
             />
@@ -80,7 +80,7 @@ function App() {
               id="maxLevel"
               value={maxLevel}
               onChange={(e) => setMaxLevel(parseFloat(e.target.value) || 10.9)}
-              min="10.0"
+              min="9.0"
               max="10.9"
               step="0.1"
             />
@@ -103,7 +103,7 @@ function App() {
         </button>
 
         <div className="stats">
-          可选曲数: {availableSongs.length} / {jubeatLv10Songs.length} 首
+          可选曲数: {availableSongs.length} / {allSongs.length} 首
         </div>
 
         {error && <div className="error-message">{error}</div>}

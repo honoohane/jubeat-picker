@@ -163,6 +163,19 @@
 }
 
 /* Level colors based on difficulty */
+/* Lv9 colors - blue/cyan tones */
+.level-9-0 { background: linear-gradient(135deg, #74b9ff, #0984e3); }
+.level-9-1 { background: linear-gradient(135deg, #81ecec, #00cec9); }
+.level-9-2 { background: linear-gradient(135deg, #55efc4, #00b894); }
+.level-9-3 { background: linear-gradient(135deg, #a29bfe, #6c5ce7); }
+.level-9-4 { background: linear-gradient(135deg, #dfe6e9, #b2bec3); }
+.level-9-5 { background: linear-gradient(135deg, #ffeaa7, #fdcb6e); }
+.level-9-6 { background: linear-gradient(135deg, #fab1a0, #e17055); }
+.level-9-7 { background: linear-gradient(135deg, #fd79a8, #e84393); }
+.level-9-8 { background: linear-gradient(135deg, #c44569, #cf6a87); }
+.level-9-9 { background: linear-gradient(135deg, #574b90, #786fa6); color: white; }
+
+/* Lv10 colors - warmer/intense tones */
 .level-10-0 { background: linear-gradient(135deg, #00d2d3, #0abde3); }
 .level-10-1 { background: linear-gradient(135deg, #1dd1a1, #10ac84); }
 .level-10-2 { background: linear-gradient(135deg, #2ed573, #26de81); }
