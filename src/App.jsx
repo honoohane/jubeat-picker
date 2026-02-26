@@ -330,7 +330,7 @@ function App() {
                     <span className={`song-difficulty ${getDifficultyClass(song.difficulty)}`}>
                       {song.difficulty}
                     </span>
-                    <span className={`song-level ${getLevelClass(song.level)}`}>Lv.{song.level % 1 === 0 ? song.level : song.level.toFixed(1)}</span>
+                    <span className={`song-level ${getLevelClass(song.level)}`}>Lv.{song.level >= 9 ? song.level.toFixed(1) : song.level}</span>
                   </div>
                 </div>
               ))}
