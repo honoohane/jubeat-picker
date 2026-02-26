@@ -523,4 +523,12 @@
   .song-title {
     font-size: 0.9rem;
   }
+  
+  /* Mobile: stack difficulty and level vertically */
+  .song-right {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.3rem;
+    margin-left: 0.5rem;
+  }
 }
