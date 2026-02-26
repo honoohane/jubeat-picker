@@ -1,6 +1,21 @@
 import { useState, useMemo } from 'react'
 import './App.css'
 import { allJubeatSongs } from './data/songs'
+import { titleToId } from './data/jacketMapping'
+
+// Helper to find jacket ID with fuzzy matching
+const findJacketId = (title) => {
+  const cleanTitle = title.replace(/\[2\]$/, '')
+  // Try exact match first
+  if (titleToId[cleanTitle]) return titleToId[cleanTitle]
+  // Try adding space before 《
+  const withSpace = cleanTitle.replace(/([^\s])《/g, '$1 《')
+  if (titleToId[withSpace]) return titleToId[withSpace]
+  // Try removing space before 《
+  const noSpace = cleanTitle.replace(/\s+《/g, '《')
+  if (titleToId[noSpace]) return titleToId[noSpace]
+  return null
+}
 
 function App() {
   const [minLevelInput, setMinLevelInput] = useState('10.0')
@@ -321,6 +336,14 @@ function App() {
                 >
                   <div className="song-info">
                     <span className="song-number">{index + 1}</span>
+                    <img 
+                      src={findJacketId(song.title) 
+                        ? `/jackets/${findJacketId(song.title)}.webp` 
+                        : '/jackets/unknown.webp'}
+                      alt="jacket"
+                      className="song-jacket"
+                      onError={(e) => { e.target.src = '/jackets/unknown.webp' }}
+                    />
                     <div className="song-details">
                       <span className="song-title">{song.title}</span>
                       <span className="song-artist">{song.artist}</span>
