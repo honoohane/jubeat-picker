@@ -100,6 +100,190 @@
   background: rgba(233, 69, 96, 0.7);
 }
 
+/* Difficulty Selector */
+.difficulty-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.difficulty-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.difficulty-checkbox input {
+  display: none;
+}
+
+.custom-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 4px;
+  background: transparent;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+/* BSC checkbox - green - inner square style */
+.difficulty-checkbox.checked .custom-checkbox.checkbox-bsc {
+  border-color: #11B500;
+}
+
+.difficulty-checkbox.checked .custom-checkbox.checkbox-bsc::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: #11B500;
+  border-radius: 2px;
+}
+
+/* ADV checkbox - orange - inner square style */
+.difficulty-checkbox.checked .custom-checkbox.checkbox-adv {
+  border-color: #FF8400;
+}
+
+.difficulty-checkbox.checked .custom-checkbox.checkbox-adv::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: #FF8400;
+  border-radius: 2px;
+}
+
+/* EXT checkbox - red - inner square style */
+.difficulty-checkbox.checked .custom-checkbox.checkbox-ext {
+  border-color: #FF2F57;
+}
+
+.difficulty-checkbox.checked .custom-checkbox.checkbox-ext::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: #FF2F57;
+  border-radius: 2px;
+}
+
+.difficulty-checkbox:hover .custom-checkbox {
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.difficulty-tag {
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  opacity: 0.4;
+  transition: all 0.2s ease;
+}
+
+.difficulty-checkbox.checked .difficulty-tag {
+  opacity: 1;
+}
+
+.difficulty-checkbox:hover .difficulty-tag {
+  opacity: 0.8;
+}
+
+/* Filter Row - contains difficulty and chart selectors */
+.filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Chart Selector */
+.chart-selector {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  align-self: center;
+}
+
+.chart-tag {
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  opacity: 0.4;
+  transition: all 0.2s ease;
+}
+
+.difficulty-checkbox.checked .chart-tag {
+  opacity: 1;
+}
+
+.difficulty-checkbox:hover .chart-tag {
+  opacity: 0.8;
+}
+
+/* Chart 1 - Soft pink */
+.chart-1 {
+  background-color: #FFE6F0;
+  color: #DB7093;
+}
+
+/* Chart 2 - Soft sky blue */
+.chart-2 {
+  background-color: #E6F4FF;
+  color: #6BB3D9;
+}
+
+/* Chart 1 checkbox - soft pink */
+.difficulty-checkbox.checked .custom-checkbox.checkbox-chart1 {
+  border-color: #DB7093;
+}
+
+.difficulty-checkbox.checked .custom-checkbox.checkbox-chart1::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: #DB7093;
+  border-radius: 2px;
+}
+
+/* Chart 2 checkbox - soft sky blue */
+.difficulty-checkbox.checked .custom-checkbox.checkbox-chart2 {
+  border-color: #6BB3D9;
+}
+
+.difficulty-checkbox.checked .custom-checkbox.checkbox-chart2::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: #6BB3D9;
+  border-radius: 2px;
+}
+
 /* GOGE Button */
 .goge-button {
   width: 100%;
@@ -260,6 +444,9 @@
 }
 
 /* Level colors based on difficulty */
+/* Lv1-8 - easy/light tone */
+.level-easy { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); color: #2e7d32; }
+
 /* Lv9 colors - blue/cyan tones */
 .level-9-0 { background: linear-gradient(135deg, #74b9ff, #0984e3); }
 .level-9-1 { background: linear-gradient(135deg, #81ecec, #00cec9); }

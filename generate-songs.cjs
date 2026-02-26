@@ -44,7 +44,14 @@ for (let i = 1; i < lines.length; i++) {
   
   if (fields.length < 6) continue;
   
-  const [title, artist, bpm, bsc, adv, ext] = fields;
+  let [title, artist, bpm, bsc, adv, ext] = fields;
+  
+  // Check for [2] chart marker - keep original title
+  let chart = 1;
+  if (title.endsWith('[2]')) {
+    chart = 2;
+    // Keep [2] in title as-is
+  }
   
   // Parse levels
   const bscLevel = parseFloat(bsc);
@@ -52,18 +59,18 @@ for (let i = 1; i < lines.length; i++) {
   const extLevel = parseFloat(ext);
   
   if (!isNaN(bscLevel)) {
-    songs.push({ title, artist, difficulty: 'BSC', level: bscLevel });
+    songs.push({ title, artist, difficulty: 'BSC', level: bscLevel, chart });
   }
   if (!isNaN(advLevel)) {
-    songs.push({ title, artist, difficulty: 'ADV', level: advLevel });
+    songs.push({ title, artist, difficulty: 'ADV', level: advLevel, chart });
   }
   if (!isNaN(extLevel)) {
-    songs.push({ title, artist, difficulty: 'EXT', level: extLevel });
+    songs.push({ title, artist, difficulty: 'EXT', level: extLevel, chart });
   }
 }
 
 // Generate JS file content
-let jsContent = `// jubeat All Songs - BSC/ADV/EXT difficulties
+let jsContent = `// jubeat All Songs - BSC/ADV/EXT difficulties with chart version
 // Total: ${songs.length} entries (${Math.round(songs.length/3)} songs × 3 difficulties)
 export const allJubeatSongs = [
 `;
@@ -71,7 +78,7 @@ export const allJubeatSongs = [
 songs.forEach((song, index) => {
   const escapedTitle = song.title.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
   const escapedArtist = song.artist.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-  jsContent += `  { title: '${escapedTitle}', artist: '${escapedArtist}', difficulty: '${song.difficulty}', level: ${song.level} }`;
+  jsContent += `  { title: '${escapedTitle}', artist: '${escapedArtist}', difficulty: '${song.difficulty}', level: ${song.level}, chart: ${song.chart} }`;
   if (index < songs.length - 1) {
     jsContent += ',\n';
   } else {

@@ -8,6 +8,34 @@ function App() {
   const [countInput, setCountInput] = useState('10')
   const [selectedSongs, setSelectedSongs] = useState([])
   const [error, setError] = useState('')
+  const [selectedDifficulties, setSelectedDifficulties] = useState(['BSC', 'ADV', 'EXT'])
+  const [selectedCharts, setSelectedCharts] = useState([1, 2])
+
+  // Toggle difficulty selection
+  const toggleDifficulty = (diff) => {
+    setSelectedDifficulties(prev => {
+      if (prev.includes(diff)) {
+        // Don't allow deselecting all
+        if (prev.length === 1) return prev
+        return prev.filter(d => d !== diff)
+      } else {
+        return [...prev, diff]
+      }
+    })
+  }
+
+  // Toggle chart selection
+  const toggleChart = (chart) => {
+    setSelectedCharts(prev => {
+      if (prev.includes(chart)) {
+        // Don't allow deselecting all
+        if (prev.length === 1) return prev
+        return prev.filter(c => c !== chart)
+      } else {
+        return [...prev, chart]
+      }
+    })
+  }
 
   // Format level: always show decimal for 9+, integer for 1-8
   const formatLevel = (num) => {
@@ -98,12 +126,12 @@ function App() {
   }
   const inputError = getInputError()
 
-  // Filter songs based on level range
+  // Filter songs based on level range, difficulty, and chart version
   const availableSongs = useMemo(() => {
     return allJubeatSongs.filter(
-      song => song.level >= minLevel && song.level <= maxLevel
+      song => song.level >= minLevel && song.level <= maxLevel && selectedDifficulties.includes(song.difficulty) && selectedCharts.includes(song.chart)
     )
-  }, [minLevel, maxLevel])
+  }, [minLevel, maxLevel, selectedDifficulties, selectedCharts])
 
   // Pick random songs
   const pickSongs = () => {
@@ -140,6 +168,15 @@ function App() {
   // Get difficulty class for coloring
   const getDifficultyClass = (difficulty) => {
     return `difficulty-${difficulty.toLowerCase()}`
+  }
+
+  // Get level class for coloring
+  const getLevelClass = (level) => {
+    if (level < 9) {
+      return 'level-easy'
+    }
+    const levelNum = Math.floor(level * 10) / 10
+    return `level-${levelNum.toFixed(1).replace('.', '-')}`
   }
 
   return (
@@ -206,6 +243,59 @@ function App() {
           </div>
         </div>
 
+        <div className="filter-row">
+          <div className="difficulty-selector">
+            <label className={`difficulty-checkbox ${selectedDifficulties.includes('BSC') ? 'checked' : ''}`}>
+              <input
+                type="checkbox"
+                checked={selectedDifficulties.includes('BSC')}
+                onChange={() => toggleDifficulty('BSC')}
+              />
+              <span className="custom-checkbox checkbox-bsc"></span>
+              <span className="difficulty-tag difficulty-bsc">BASIC</span>
+            </label>
+            <label className={`difficulty-checkbox ${selectedDifficulties.includes('ADV') ? 'checked' : ''}`}>
+              <input
+                type="checkbox"
+                checked={selectedDifficulties.includes('ADV')}
+                onChange={() => toggleDifficulty('ADV')}
+              />
+              <span className="custom-checkbox checkbox-adv"></span>
+              <span className="difficulty-tag difficulty-adv">ADVANCED</span>
+            </label>
+            <label className={`difficulty-checkbox ${selectedDifficulties.includes('EXT') ? 'checked' : ''}`}>
+              <input
+                type="checkbox"
+                checked={selectedDifficulties.includes('EXT')}
+                onChange={() => toggleDifficulty('EXT')}
+              />
+              <span className="custom-checkbox checkbox-ext"></span>
+              <span className="difficulty-tag difficulty-ext">EXTREME</span>
+            </label>
+          </div>
+
+          <div className="chart-selector">
+            <label className={`difficulty-checkbox ${selectedCharts.includes(1) ? 'checked' : ''}`}>
+              <input
+                type="checkbox"
+                checked={selectedCharts.includes(1)}
+                onChange={() => toggleChart(1)}
+              />
+              <span className="custom-checkbox checkbox-chart1"></span>
+              <span className="chart-tag chart-1">[1]譜面</span>
+            </label>
+            <label className={`difficulty-checkbox ${selectedCharts.includes(2) ? 'checked' : ''}`}>
+              <input
+                type="checkbox"
+                checked={selectedCharts.includes(2)}
+                onChange={() => toggleChart(2)}
+              />
+              <span className="custom-checkbox checkbox-chart2"></span>
+              <span className="chart-tag chart-2">[2]譜面</span>
+            </label>
+          </div>
+        </div>
+
         <button className="goge-button" onClick={pickSongs}>
           🎲 GOGE!
         </button>
@@ -225,7 +315,7 @@ function App() {
             <div className="songs-container">
               {selectedSongs.map((song, index) => (
                 <div 
-                  key={`${song.title}-${song.difficulty}-${index}`} 
+                  key={`${song.title}-${song.difficulty}-${song.chart}-${index}`} 
                   className="song-card"
                   style={{ animationDelay: `${index * 0.05}s` }}
                 >
@@ -240,7 +330,7 @@ function App() {
                     <span className={`song-difficulty ${getDifficultyClass(song.difficulty)}`}>
                       {song.difficulty}
                     </span>
-                    <span className="song-level">Lv.{song.level % 1 === 0 ? song.level : song.level.toFixed(1)}</span>
+                    <span className={`song-level ${getLevelClass(song.level)}`}>Lv.{song.level % 1 === 0 ? song.level : song.level.toFixed(1)}</span>
                   </div>
                 </div>
               ))}
