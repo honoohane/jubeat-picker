@@ -346,11 +346,31 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   animation: slideIn 0.3s ease-out;
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .song-card:hover {
   background: rgba(255, 255, 255, 0.12);
   transform: translateX(5px);
+}
+
+/* Expanded state - wrap content */
+.song-card.expanded {
+  flex-wrap: wrap;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.song-card.expanded .song-details {
+  min-width: 0;
+}
+
+.song-card.expanded .song-title,
+.song-card.expanded .song-artist {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  word-break: break-word;
 }
 
 @keyframes slideIn {
