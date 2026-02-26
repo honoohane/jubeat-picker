@@ -52,6 +52,54 @@
   box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.2);
 }
 
+/* Level input with custom step buttons */
+.level-input-wrapper {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  width: 100%;
+}
+
+.level-input-wrapper input {
+  flex: 1;
+  text-align: center;
+  border-radius: 0;
+  padding: 0.75rem 0.5rem;
+  min-width: 0;
+}
+
+.step-btn {
+  width: 36px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-btn:first-child {
+  border-radius: 8px 0 0 8px;
+  border-right: none;
+}
+
+.step-btn:last-child {
+  border-radius: 0 8px 8px 0;
+  border-left: none;
+}
+
+.step-btn:hover {
+  background: rgba(233, 69, 96, 0.5);
+}
+
+.step-btn:active {
+  background: rgba(233, 69, 96, 0.7);
+}
+
 /* GOGE Button */
 .goge-button {
   width: 100%;
@@ -144,12 +192,61 @@
   flex: 1;
   display: flex;
   align-items: center;
+  min-width: 0;
+}
+
+.song-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .song-title {
   font-size: 1rem;
   font-weight: 500;
   color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-artist {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+.song-difficulty {
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+/* Difficulty colors - BSC/ADV/EXT */
+.difficulty-bsc {
+  background-color: #DDFFDD;
+  color: #11B500;
+}
+
+.difficulty-adv {
+  background-color: #FFFFDD;
+  color: #FF8400;
+}
+
+.difficulty-ext {
+  background-color: #FFDDDD;
+  color: #FF2F57;
 }
 
 .song-level {
