@@ -10,12 +10,6 @@ function App() {
   const [error, setError] = useState('')
   const [selectedDifficulties, setSelectedDifficulties] = useState(['BSC', 'ADV', 'EXT'])
   const [selectedCharts, setSelectedCharts] = useState([1, 2])
-  const [expandedIndex, setExpandedIndex] = useState(null)
-
-  // Toggle card expansion
-  const toggleExpand = (index) => {
-    setExpandedIndex(prev => prev === index ? null : index)
-  }
 
   // Toggle difficulty selection
   const toggleDifficulty = (diff) => {
@@ -142,7 +136,6 @@ function App() {
   // Pick random songs
   const pickSongs = () => {
     setError('')
-    setExpandedIndex(null)
     
     if (availableSongs.length === 0) {
       setError('指定难度范围内没有歌曲')
@@ -323,9 +316,8 @@ function App() {
               {selectedSongs.map((song, index) => (
                 <div 
                   key={`${song.title}-${song.difficulty}-${song.chart}-${index}`} 
-                  className={`song-card ${expandedIndex === index ? 'expanded' : ''}`}
+                  className="song-card"
                   style={{ animationDelay: `${index * 0.05}s` }}
-                  onClick={() => toggleExpand(index)}
                 >
                   <div className="song-info">
                     <span className="song-number">{index + 1}</span>
