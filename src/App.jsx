@@ -1,20 +1,112 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import './App.css'
 import { allJubeatSongs } from './data/songs'
-import { titleToId } from './data/jacketMapping'
+import { titleToId, titleToVersion } from './data/jacketMapping'
 
-// Helper to find jacket ID with fuzzy matching
+// 版本列表（显示顺序）
+const ALL_VERSIONS = [
+  'jubeat',
+  'jubeat ripples',
+  'jubeat ripples APPEND',
+  'jubeat knit',
+  'jubeat knit APPEND',
+  'jubeat copious',
+  'jubeat copious APPEND',
+  'jubeat saucer',
+  'jubeat saucer fulfill',
+  'jubeat prop',
+  'jubeat Qubell',
+  'jubeat clan',
+  'jubeat festo',
+  'jubeat Ave.',
+  'jubeat beyond the Ave.',
+]
+
+// 版本显示名称
+const getVersionDisplay = (version) => {
+  if (version === 'jubeat') return '無印'
+  return version.replace(/^jubeat /, '')
+}
+
+// Normalize title for matching: handle full-width/half-width, accents, spaces, case
+const normalizeTitle = (str) => {
+  return str
+    .replace(/\[2\]$/, '')           // Remove [2] suffix
+    .trim()                           // Remove leading/trailing whitespace
+    // Full-width to half-width conversion
+    .replace(/？/g, '?')
+    .replace(/！/g, '!')
+    .replace(/＠/g, '@')
+    .replace(/＃/g, '#')
+    .replace(/＄/g, '$')
+    .replace(/％/g, '%')
+    .replace(/＆/g, '&')
+    .replace(/（/g, '(')
+    .replace(/）/g, ')')
+    .replace(/［/g, '[')
+    .replace(/］/g, ']')
+    .replace(/｛/g, '{')
+    .replace(/｝/g, '}')
+    .replace(/：/g, ':')
+    .replace(/；/g, ';')
+    .replace(/＂/g, '"')
+    .replace(/＇/g, "'")
+    .replace(/，/g, ',')
+    .replace(/．/g, '.')
+    .replace(/／/g, '/')
+    .replace(/～/g, '~')
+    .replace(/－/g, '-')
+    .replace(/＋/g, '+')
+    .replace(/＝/g, '=')
+    .replace(/＿/g, '_')
+    .replace(/｜/g, '|')
+    .replace(/＜/g, '<')
+    .replace(/＞/g, '>')
+    // Curly quotes to straight quotes
+    .replace(/[""„‟]/g, '"')
+    .replace(/[''‚‛]/g, "'")
+    // Remove accents (é→e, etc.)
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    // Normalize spaces around symbols
+    .replace(/\s*《/g, '《')
+    .replace(/》\s*/g, '》')
+    .replace(/\s*-\s*/g, '-')         // Normalize hyphens
+    .replace(/\s+/g, ' ')             // Multiple spaces to single
+    .toLowerCase()                     // Case insensitive
+}
+
+// Build normalized lookup table (both exact and prefix keys)
+const normalizedMapping = {}
+const prefixMapping = []
+Object.entries(titleToId).forEach(([title, id]) => {
+  const normalized = normalizeTitle(title)
+  normalizedMapping[normalized] = id
+  // Store prefix for partial matching (for incomplete xlsx data)
+  if (normalized.length >= 4) {
+    prefixMapping.push({ prefix: normalized, id })
+  }
+})
+
+// Helper to find jacket ID with normalized matching
 const findJacketId = (title) => {
-  const cleanTitle = title.replace(/\[2\]$/, '')
-  // Try exact match first
-  if (titleToId[cleanTitle]) return titleToId[cleanTitle]
-  // Try adding space before 《
-  const withSpace = cleanTitle.replace(/([^\s])《/g, '$1 《')
-  if (titleToId[withSpace]) return titleToId[withSpace]
-  // Try removing space before 《
-  const noSpace = cleanTitle.replace(/\s+《/g, '《')
-  if (titleToId[noSpace]) return titleToId[noSpace]
+  const normalized = normalizeTitle(title)
+  // Exact match first
+  if (normalizedMapping[normalized]) {
+    return normalizedMapping[normalized]
+  }
+  // Partial match: if song title starts with a mapping key (xlsx data incomplete)
+  for (const { prefix, id } of prefixMapping) {
+    if (normalized.startsWith(prefix) && prefix.length >= 4) {
+      return id
+    }
+  }
   return null
+}
+
+// Helper to get song version
+const getSongVersion = (title) => {
+  // 直接用完整标题查找（含[2]），因为版本映射已按完整标题生成
+  return titleToVersion[title] || 'jubeat beyond the Ave.'
 }
 
 function App() {
@@ -25,6 +117,24 @@ function App() {
   const [error, setError] = useState('')
   const [selectedDifficulties, setSelectedDifficulties] = useState(['BSC', 'ADV', 'EXT'])
   const [selectedCharts, setSelectedCharts] = useState([1, 2])
+  const [selectedVersions, setSelectedVersions] = useState([...ALL_VERSIONS])
+  const [versionDropdownOpen, setVersionDropdownOpen] = useState(false)
+  const versionDropdownRef = useRef(null)
+
+  // 点击外部关闭下拉菜单
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (versionDropdownRef.current && !versionDropdownRef.current.contains(event.target)) {
+        setVersionDropdownOpen(false)
+      }
+    }
+    if (versionDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [versionDropdownOpen])
 
   // Toggle difficulty selection
   const toggleDifficulty = (diff) => {
@@ -50,6 +160,28 @@ function App() {
         return [...prev, chart]
       }
     })
+  }
+
+  // Toggle version selection
+  const toggleVersion = (version) => {
+    setSelectedVersions(prev => {
+      if (prev.includes(version)) {
+        // 允许全部取消选择
+        return prev.filter(v => v !== version)
+      } else {
+        return [...prev, version]
+      }
+    })
+  }
+
+  // Select/Deselect all versions
+  const toggleAllVersions = () => {
+    if (selectedVersions.length === ALL_VERSIONS.length) {
+      // 真正的全取消
+      setSelectedVersions([])
+    } else {
+      setSelectedVersions([...ALL_VERSIONS])
+    }
   }
 
   // Format level: always show decimal for 9+, integer for 1-8
@@ -141,12 +273,16 @@ function App() {
   }
   const inputError = getInputError()
 
-  // Filter songs based on level range, difficulty, and chart version
+  // Filter songs based on level range, difficulty, chart version, and game version
   const availableSongs = useMemo(() => {
     return allJubeatSongs.filter(
-      song => song.level >= minLevel && song.level <= maxLevel && selectedDifficulties.includes(song.difficulty) && selectedCharts.includes(song.chart)
+      song => song.level >= minLevel && 
+              song.level <= maxLevel && 
+              selectedDifficulties.includes(song.difficulty) && 
+              selectedCharts.includes(song.chart) &&
+              selectedVersions.includes(getSongVersion(song.title))
     )
-  }, [minLevel, maxLevel, selectedDifficulties, selectedCharts])
+  }, [minLevel, maxLevel, selectedDifficulties, selectedCharts, selectedVersions])
 
   // Pick random songs
   const pickSongs = () => {
@@ -158,12 +294,6 @@ function App() {
       return
     }
 
-    if (count > availableSongs.length) {
-      setError(`指定范围内只有${availableSongs.length}首歌曲，请调整数量。`)
-      setSelectedSongs([])
-      return
-    }
-
     // Fisher-Yates shuffle algorithm
     const shuffled = [...availableSongs]
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -171,8 +301,9 @@ function App() {
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
     }
 
-    // Take first 'count' songs
-    const picked = shuffled.slice(0, count)
+    // Take first 'count' songs (or all if count > available)
+    const actualCount = Math.min(count, availableSongs.length)
+    const picked = shuffled.slice(0, actualCount)
     
     // Sort by level descending
     picked.sort((a, b) => b.level - a.level)
@@ -308,6 +439,38 @@ function App() {
               <span className="custom-checkbox checkbox-chart2"></span>
               <span className="chart-tag chart-2">[2]譜面</span>
             </label>
+          </div>
+
+          <div className="version-selector" ref={versionDropdownRef}>
+            <div 
+              className="version-dropdown-trigger"
+              onClick={() => setVersionDropdownOpen(!versionDropdownOpen)}
+            >
+              <span>版本 ({selectedVersions.length}/{ALL_VERSIONS.length})</span>
+              <span className="dropdown-arrow">{versionDropdownOpen ? '▲' : '▼'}</span>
+            </div>
+            {versionDropdownOpen && (
+              <div className="version-dropdown">
+                <div className="version-option version-all" onClick={toggleAllVersions}>
+                  <input
+                    type="checkbox"
+                    checked={selectedVersions.length === ALL_VERSIONS.length}
+                    readOnly
+                  />
+                  <span>{selectedVersions.length === ALL_VERSIONS.length ? '取消全选' : '全选'}</span>
+                </div>
+                {ALL_VERSIONS.map(version => (
+                  <div key={version} className="version-option" onClick={() => toggleVersion(version)}>
+                    <input
+                      type="checkbox"
+                      checked={selectedVersions.includes(version)}
+                      readOnly
+                    />
+                    <span>{getVersionDisplay(version)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
