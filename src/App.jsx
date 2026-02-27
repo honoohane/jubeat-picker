@@ -24,8 +24,14 @@ const ALL_VERSIONS = [
 
 // 版本显示名称
 const getVersionDisplay = (version) => {
-  if (version === 'jubeat') return '無印'
-  return version.replace(/^jubeat /, '')
+  return version
+}
+
+// 版本颜色类（从老到新渐变）
+const getVersionColorClass = (version) => {
+  const index = ALL_VERSIONS.indexOf(version)
+  if (index === -1) return 'version-14' // 默认最新
+  return `version-${index}`
 }
 
 // Normalize title for matching: handle full-width/half-width, accents, spaces, case
@@ -513,10 +519,13 @@ function App() {
                     </div>
                   </div>
                   <div className="song-right">
-                    <span className={`song-difficulty ${getDifficultyClass(song.difficulty)}`}>
-                      {song.difficulty}
-                    </span>
-                    <span className={`song-level ${getLevelClass(song.level)}`}>Lv.{song.level >= 9 ? song.level.toFixed(1) : song.level}</span>
+                    <div className="song-diff-level">
+                      <span className={`song-difficulty ${getDifficultyClass(song.difficulty)}`}>
+                        {song.difficulty}
+                      </span>
+                      <span className={`song-level ${getLevelClass(song.level)}`}>Lv.{song.level >= 9 ? song.level.toFixed(1) : song.level}</span>
+                    </div>
+                    <span className={`song-version ${getVersionColorClass(getSongVersion(song.title))}`}>{getVersionDisplay(getSongVersion(song.title))}</span>
                   </div>
                 </div>
               ))}
